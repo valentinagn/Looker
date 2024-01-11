@@ -1,0 +1,116 @@
+view: pop_date_field {
+  extension: required
+
+  dimension_group: created {
+    hidden:no
+    type: time
+    view_label: " Period over Period"
+    label: "Period"
+    timeframes: [
+      raw,
+      time,
+      hour_of_day,
+      date,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,
+      day_of_year,
+      week,
+      week_of_year,
+      month,
+      month_name,
+      month_num,
+      quarter,
+      year
+    ]
+    sql: TIMESTAMP(${TABLE}.fecha) ;;
+    #sql: {% if } ;;
+    convert_tz: no
+  }
+
+  filter: current_date_range {
+    type: date
+    view_label: " Period over Period"
+    label: "Current Date Range"
+    description: "Select the current date range you are interested in. Make sure any other filter on Event Date covers this period, or is removed."
+    sql: ${period} IS NOT NULL AND ${created_date} BETWEEN DATE(${period_2_start}) AND DATE({% date_end current_date_range %}) ;;
+    #sql: ${period} IS NOT NULL AND ${created_date} BETWEEN ${period_2_start} AND {% date_end current_date_range %} ;;
+    convert_tz: no
+  }
+
+
+  parameter: compare_to {
+    view_label: " Period over Period"
+    description: "Select the templated previous period you would like to compare to. Must be used with Current Date Range filter"
+    label: "Compare To:"
+    type: unquoted
+    allowed_value: {
+      label: "Previous Period"
+      value: "Period"
+    }
+    allowed_value: {
+      label: "Previous Week"
+      value: "Week"
+    }
+    allowed_value: {
+      label: "Previous Month"
+      value: "Month"
+    }
+    allowed_value: {
+      label: "Previous Quarter"
+      value: "Quarter"
+    }
+    allowed_value: {
+      label: "Previous Year"
+      value: "Year"
+    }
+    default_value: "Period"
+    # view_label: " Period over Period" view_label having been declared twice in the article
+  }
+
+## ------------------ DIMENSIONS TO PLOT ------------------ ##
+
+  dimension_group: date_in_period {
+    hidden: no
+    description: "Use this as your grouping dimension when comparing periods. Aligns the previous periods onto the current period"
+    label: "Current Period"
+    type: time
+    # sql: DATE_ADD( ${day_in_period} - 1, DATE({% date_start current_date_range %}), DAY) ;;
+    sql: DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL (${day_in_period} - 1) DAY)  ;;
+    view_label: " Period over Period"
+    timeframes: [
+      date,
+      hour_of_day,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,
+      day_of_year,
+      week_of_year,
+      month,
+      month_name,
+      month_num,
+      year]
+    convert_tz: no
+  }
+
+
+  dimension: period {
+    view_label: " Period over Period"
+    label: "Period"
+    description: "Pivot me! Returns the period the metric covers, i.e. either the 'This Period' or 'Previous Period'"
+    type: string
+    order_by_field: order_for_period
+    sql:
+        {% if current_date_range._is_filtered %}
+            CASE
+            WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+            THEN 'This {% parameter compare_to %}'
+            WHEN DATE(${created_date}) between ${period_2_start} and ${period_2_end}
+            THEN 'Last {% parameter compare_to %}'
+            END
+        {% else %}
+            NULL
+        {% endif %}
+        ;;
+  }
+}
