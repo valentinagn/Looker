@@ -1,0 +1,78 @@
+connection: "ttdm_tablero"
+
+# include all the views
+include: "/views/**/*.view.lkml"
+
+datagroup: ttdm_tablero_default_datagroup {
+  # sql_trigger: SELECT MAX(id) FROM etl_log;;
+  max_cache_age: "1 hour"
+}
+
+persist_with: ttdm_tablero_default_datagroup
+
+explore: data_table_total {
+  join: call_table_total {
+    type: full_outer
+    relationship: many_to_many
+    sql_on: ${call_table_total.gsm} = ${data_table_total.gsm}
+    AND ${call_table_total.fecha_raw} = ${data_table_total.fecha_raw};;
+  }
+}
+
+explore: trafico_diferenciado_tablero {}
+
+explore: segmentacion_lineas {}
+
+explore: call_table_total {}
+
+
+explore: data_table_total_test {
+
+
+
+  join: call_table_total_test {
+    type: full_outer
+    relationship: many_to_many
+    sql_on: ${call_table_total_test.gsm} = ${data_table_total_test.gsm}
+      AND ${call_table_total_test.fecha_raw} = ${data_table_total_test.fecha_raw}
+--      AND ${data_table_total_test.rn_call} = ${call_table_total_test.rn_call}
+      ;;
+}
+}
+
+explore: tablero_ttdm_muestra {
+  join: bandas {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${tablero_ttdm_muestra.bandas} = ${bandas.bandas};;
+
+}
+}
+
+explore: tablero_ttdm {
+
+  join: comportamiento {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${tablero_ttdm.gsm} = ${comportamiento.gsm};;
+
+  }
+
+  join: bandas {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${tablero_ttdm.bandas} = ${bandas.bandas};;
+
+  }
+}
+
+#  join: join_test {
+#    type: full_outer
+#    relationship: many_to_one
+#    sql_on: ${data_table_total_test.gsm} = ${join_test.gsm_data}
+#    --AND ${data_table_total_test.gsm} = ${join_test.gsm_data}
+#    ;;
+#  }
+
+#      AND ${call_table_total_test.fecha_join} = ${data_table_total_test.fecha_join}
+#      AND ${call_table_total_test.gsm} = ${join_test.gsm_coalesce}
