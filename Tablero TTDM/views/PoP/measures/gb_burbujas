@@ -1,0 +1,222 @@
+view: cant_gb_diferenciado_pop {
+
+  extension: required
+
+
+## DOWN
+
+  measure: current_period_total_gb_down_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: ${TABLE}.total_down_diferenciado;;
+    filters: [period_filtered_measures: "this"]
+    value_format: "0.00"
+  }
+
+  measure: previous_period_total_gb_down_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: ${TABLE}.total_down_diferenciado;;
+    filters: [period_filtered_measures: "last"]
+    value_format: "0.00"
+  }
+
+  measure: total_gb_down_diferenciado_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    label: "Cant_gb_down_diferenciado PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_total_gb_down_diferenciado} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_total_gb_down_diferenciado} / NULLIF(${previous_period_total_gb_down_diferenciado} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+
+
+## UP
+
+  measure: current_period_total_gb_up_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: ${TABLE}.TOTAL_UP_diferenciado;;
+    filters: [period_filtered_measures: "this"]
+    value_format: "0.00"
+  }
+
+  measure: previous_period_total_gb_up_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: ${TABLE}.TOTAL_UP_diferenciado;;
+    filters: [period_filtered_measures: "last"]
+    value_format: "0.00"
+  }
+
+  measure: total_gb_up_diferenciado_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    label: "Cant_gb_up_diferenciado PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_total_gb_up_diferenciado} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_total_gb_up_diferenciado} / NULLIF(${previous_period_total_gb_up_diferenciado} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+
+
+## TOTALES
+
+  measure: current_period_total_gb_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: (${TABLE}.total_down_diferenciado + TOTAL_UP_diferenciado);;
+    filters: [period_filtered_measures: "this"]
+    value_format: "0.00"
+  }
+
+  measure: previous_period_total_gb_diferenciado {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: ${TABLE}.total_down_diferenciado + TOTAL_UP_diferenciado;;
+    filters: [period_filtered_measures: "last"]
+    value_format: "0.00"
+  }
+
+  measure: total_gb_diferenciado_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    label: "Cant_gb PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_total_gb_diferenciado} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_total_gb_diferenciado} / NULLIF(${previous_period_total_gb_diferenciado} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+
+
+
+## POR USUARIO
+
+## DOWN
+
+  measure: current_period_gb_down_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${current_period_total_gb_down_diferenciado} /NULLIF(${current_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+  }
+
+  measure: previous_period_gb_down_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${previous_period_total_gb_down_diferenciado}/NULLIF(${previous_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+  }
+
+  measure: gb_down_diferenciado_x_us_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    label: "GB down_diferenciado x user PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_gb_down_diferenciado_x_us} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_gb_down_diferenciado_x_us} / NULLIF(${previous_period_gb_down_diferenciado_x_us} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+## UP
+
+  measure: current_period_gb_up_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${current_period_total_gb_up_diferenciado} /NULLIF(${current_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+  }
+
+  measure: previous_period_gb_up_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${previous_period_total_gb_up_diferenciado}/NULLIF(${previous_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+  }
+
+  measure: gb_up_diferenciado_x_us_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    label: "GB up_diferenciado x user PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_gb_up_diferenciado_x_us} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_gb_up_diferenciado_x_us} / NULLIF(${previous_period_gb_up_diferenciado_x_us} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+
+## TOTALES
+  measure: current_period_gb_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${current_period_total_gb_diferenciado} /NULLIF(${current_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+#    filters: [period_filtered_measures: "this"]
+  }
+
+
+  measure: previous_period_gb_diferenciado_x_us {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: 1.0 * (${previous_period_total_gb_diferenciado}/NULLIF(${previous_period_gsm_pop},0)) ;;
+    value_format: "0.00"
+#    filters: [period_filtered_measures: "last"]
+  }
+
+
+  measure: gb_diferenciado_x_us_pop_change {
+    view_label: " Period over Period"
+    group_label: "GB diferenciado x user"
+    type: number
+    sql: CASE WHEN ${current_period_gb_diferenciado_x_us} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_gb_diferenciado_x_us} / NULLIF(${previous_period_gb_diferenciado_x_us} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+
+
+
+
+## VISUAL DE BURBUJAS
+
+  measure: current_period_total_gb_diferenciado_segmento {
+    hidden: yes
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: (${TABLE}.total_down_diferenciado + TOTAL_UP_diferenciado);;
+    html: {{ rendered_value }} | {{segmento._rendered_value }};;
+    filters: [period_filtered_measures: "this"]
+  }
+
+  measure: current_period_total_gb_diferenciado_app {
+    hidden: yes
+    view_label: " Period over Period"
+    group_label: "GB diferenciado"
+    type: sum
+    sql: (${TABLE}.total_down_diferenciado + TOTAL_UP_diferenciado);;
+    html: {{ rendered_value }} | {{aplicacion._rendered_value }};;
+    filters: [period_filtered_measures: "this"]
+  }
+}
