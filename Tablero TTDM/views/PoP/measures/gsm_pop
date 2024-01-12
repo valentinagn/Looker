@@ -1,0 +1,31 @@
+view: gsm_pop {
+extension: required
+
+
+  measure: current_period_gsm_pop {
+    view_label: " Period over Period"
+    group_label: "Cantidad GSM"
+    type: count_distinct
+    sql: ${TABLE}.gsm;;
+    filters: [period_filtered_measures: "this"]
+  }
+
+  measure: previous_period_gsm_pop {
+    view_label: " Period over Period"
+    group_label: "Cantidad GSM"
+    type: count_distinct
+    sql: ${TABLE}.gsm;;
+    filters: [period_filtered_measures: "last"]
+  }
+
+  measure: gsm_pop_pop_change {
+    view_label: " Period over Period"
+    group_label: "Cantidad GSM"
+    label: "Cant_GSM PoP % change"
+    type: number
+    sql: CASE WHEN ${current_period_gsm_pop} = 0
+            THEN NULL
+            ELSE (1.0 * ${current_period_gsm_pop} / NULLIF(${previous_period_gsm_pop} ,0)) - 1 END ;;
+    value_format_name: percent_2
+  }
+}
